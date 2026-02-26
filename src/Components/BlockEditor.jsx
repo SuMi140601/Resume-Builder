@@ -1,53 +1,70 @@
-function BlockEditor({ block, setBlock }) {
+import { useRef } from "react";                 //ref  get current value no page relode/ no re-render
 
+function BlockEditor({ block, setBlock }) {
+const editorRef = useRef(null);
   if (!block) return null;
 
   const updateBlock = (updated) => {
-    setBlock(updated);
+    setBlock(updated);           //block state update reusable
   };
 
   return (
     <div className="space-y-3">
 
+
       {/* TEXT / HEADINGS / PARAGRAPH */}
+<>
       {block.content !== undefined && (
-        
-       <>
-       <div className="flex gap-2 mb-2 ">
+       <div
+       ref={editorRef}
+  contentEditable
+  suppressContentEditableWarning      //silent console warning
+  className="w-full border p-2 min-h-[100px ] text-left"
+  style={{ whiteSpace: "pre-wrap", direction:"ltr", textAlign: "left"}}
+  onBlur={(e) =>
+    updateBlock({
+      ...block,
+      content: e.currentTarget.innerHTML //for bold and italic formating
+    })
+  }
+  dangerouslySetInnerHTML={{ __html: block.content }}   //save html renders and store
+/>
+)}
+
+<div className="flex gap-2 mb-2 ">
+
   <button
-    onClick={() => document.execCommand("bold")}
-    className="bg-gray-300 px-2 py-1"
+  onMouseDown={(e) => {
+    e.preventDefault();   // stop brouser default behaviour
+    editorRef.current?.focus();
+document.execCommand("bold");//apply
+  }}
+    // onClick={() => 
+    className="bg-blue-500 hover:bg-blue-800 active:bg-green-500 text-white font-bold py-2 px-4 rounded"
   >
     Bold
   </button>
 
+
+
+
   <button
-    onClick={() => document.execCommand("italic")}
-    className="bg-gray-300 px-2 py-1"
+onMouseDown={(e) => {
+    e.preventDefault();
+    editorRef.current?.focus();
+document.execCommand("italic");
+  }}
+    // onClick={() => 
+    className="bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-700 active:bg-green-500"
   >
     Italic
   </button>
-</div>
-       <div
-  contentEditable
-  className="w-full border p-2 min-h-[100px]"
-  style={{ whiteSpace: "pre-wrap" }}
-  onInput={(e) =>
-    updateBlock({
-      ...block,
-      content: e.currentTarget.innerHTML
-    })
-  }
-  dangerouslySetInnerHTML={{ __html: block.content }}
-/>
 
+      </div>
 
-</> 
-
-
-      )}
-
-      {/* UL / OL */}
+      
+</>
+      {/* UL / OL          stored as array*/}
       {(block.type === "ul" || block.type === "ol") && (
         <>
           {block.items.map((item, index) => (
@@ -69,14 +86,16 @@ function BlockEditor({ block, setBlock }) {
                 ...block,
                 items: [...block.items, "New Item"],
               })
-            }
-            className="bg-blue-500 text-white px-3 py-1"
+            } 
+            className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-800 active:bg-green-500 transition"
           >
             Add Item
           </button>
         </>
       )}
-{/* LINK */}
+      
+
+{/* LINK      store label and url separately*/}
 {block.type === "link" && (
   <>
     <input
@@ -98,9 +117,10 @@ function BlockEditor({ block, setBlock }) {
       }
       className="w-full border p-2"
     />
+    
   </>
 )}
-      {/* TABLE */}
+      {/* TABLE   managed for row column editing*/}
       {block.type === "table" && (
         <>
           {block.data.map((row, rIndex) => (
@@ -125,7 +145,7 @@ function BlockEditor({ block, setBlock }) {
               ))}
             </div>
           ))}
-
+<div className="flex gap-2">
           <button
             onClick={() => {
               const newRow = Array(block.cols).fill("");
@@ -135,7 +155,8 @@ function BlockEditor({ block, setBlock }) {
                 data: [...block.data, newRow],
               });
             }}
-            className="bg-green-500 text-white px-3 py-1"
+            className="
+            px-3 py-1px-4 py-2 bg-green-600 text-white rounded hover:bg-green-800 active:bg-green-500 transition"
           >
             Add Row
           </button>
@@ -148,12 +169,14 @@ function BlockEditor({ block, setBlock }) {
                 data: block.data.map((row) => [...row, ""]),
               });
             }}
-            className="bg-purple-500 text-white px-3 py-1 ml-2"
+            className="px-3 py-1px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-800 active:bg-green-500 transition"
           >
             Add Column
           </button>
+          </div>
         </>
       )}
+      
 
       {/* FONT SIZE */}
       <input
@@ -183,21 +206,21 @@ function BlockEditor({ block, setBlock }) {
 <div className="flex gap-2">
   <button
     onClick={() => updateBlock({ ...block, textAlign: "left" })}
-    className="bg-gray-300 px-2 py-1"
+    className="px-3 py-1px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-700  active:bg-green-500 transition"
   >
     Left
   </button>
 
   <button
     onClick={() => updateBlock({ ...block, textAlign: "center" })}
-    className="bg-gray-300 px-2 py-1"
+    className="px-3 py-1px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-700 active:bg-green-500 transition"
   >
     Center
   </button>
 
   <button
     onClick={() => updateBlock({ ...block, textAlign: "right" })}
-    className="bg-gray-300 px-2 py-1"
+    className="px-3 py-1px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-700 active:bg-green-500 transition"
   >
     Right
   </button>

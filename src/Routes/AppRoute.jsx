@@ -1,8 +1,8 @@
 import {Route, Routes } from "react-router-dom";
 import Dashboard from "../Pages/Dashboard";
 import CreateResume from "../Pages/CreateResume";
-import BlockEditor from "../Pages/BlockEditor";
-import ResumeBlock from "../Pages/ResumeBlock.jsx";
+import BlockEditor from "../Components/BlockEditor.jsx";
+import ResumeBlock from "../Components/ResumeBlock.jsx";
 function AppRoute () {
     return (
         <div>

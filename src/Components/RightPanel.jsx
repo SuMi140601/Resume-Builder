@@ -1,4 +1,4 @@
-import ResumeBlock from "./ResumeBlock.jsx";
+import ResumeBlock from "./ResumeBlock"
 
 
 
@@ -22,7 +22,7 @@ function RightPanel({ blocks, selectedId, setSelectedId }) {
           </div>
         ))}
       </div>
-      {/* <Download /> */}
+      
     </div>
   );
 }

@@ -1,29 +1,36 @@
+//control pannel allow edit add delete section modify content
+
 import { useState, useEffect } from "react";
 import BlockEditor from "./BlockEditor";
 
-const blockTypes = [
+const blockTypes = [                  //array    what section need to be in dropdown. 
   "H1","H2","H3","H4","H5","H6",
   "paragraph","ul","ol","table",
   "image","link","divider",
 ];
 
 function LeftPanel({ blocks, setBlocks, selectedId, setSelectedId }) {
+  //Props From Parents
 
   const [selectedType, setSelectedType] = useState("");
   const [currentBlock, setCurrentBlock] = useState(null);
+// SelectedType control dropdown value and     current store temporary block before saving
+// eg H1 Para, Table etc
 
-  //  When block clicked → load into editor
-  useEffect(() => {
+
+  //  When block clicked - load into editor
+  useEffect(() => {                          
     if (selectedId) {
       const block = blocks.find(b => b.id === selectedId);
       if (block) {
         setCurrentBlock(block);
         setSelectedType(block.type);
-      }
+      }                                     
     }
   }, [selectedId, blocks]);
 
-  //  Dropdown select
+
+  //  Dropdown select      selected empty then go for reset purpose
   const handleSelect = (type) => {
   setSelectedType(type);
 
@@ -32,27 +39,35 @@ function LeftPanel({ blocks, setBlocks, selectedId, setSelectedId }) {
     return;
   }
 
+
+
   let newBlock = {
-    id: Date.now(),
+    id: Date.now(),  //unique id get
     type,
     fontSize: 16,
     fontFamily: "Arial",
-    bold: false,
-    italic: false,
-    underline: false,
-     textAlign: "Right",  
+    // bold: false,
+    // italic: false,
+    // underline: false,
+     textAlign: "Left"
   };
+
 
   if (type === "ul" || type === "ol") {
     newBlock.items = ["List item"];
   } 
+
+  //
   else if (type === "table") {
     newBlock.rows = 2;
     newBlock.cols = 2;
     newBlock.data = Array(2)
       .fill()
       .map(() => Array(2).fill(""));
-  } else if (type === "link") {
+  } 
+  
+  
+  else if (type === "link") {
   newBlock.label = "";
   newBlock.url = "";
 }
@@ -63,18 +78,19 @@ function LeftPanel({ blocks, setBlocks, selectedId, setSelectedId }) {
   setCurrentBlock(newBlock);
 };
 
-  //ADD or UPDATE
+  //ADD or UPDATE                   //prevent empty save 
   const handleSave = () => {
     if (!currentBlock) return;
 
     if (selectedId) {
-      // UPDATE
+      // UPDATE                  map to update specific block with disturbing other state
       setBlocks(prev =>
         prev.map(b =>
           b.id === selectedId ? currentBlock : b
         )
       );
     } else {
+      
       // ADD
       setBlocks(prev => [...prev, currentBlock]);
     }
@@ -89,7 +105,7 @@ function LeftPanel({ blocks, setBlocks, selectedId, setSelectedId }) {
   const handleDelete = () => {
     if (!selectedId) return;
 
-    setBlocks(prev => prev.filter(b => b.id !== selectedId));
+    setBlocks(prev => prev.filter(b => b.id !== selectedId));    //filter tp remove block of specific id
     setSelectedType("");
     setCurrentBlock(null);
     setSelectedId(null);
@@ -97,7 +113,7 @@ function LeftPanel({ blocks, setBlocks, selectedId, setSelectedId }) {
 
   return (
     <div className="w-1/3 bg-white p-6 border-r overflow-y-auto">
-      <h2 className="text-xl font-semibold mb-4">Control Panel</h2>
+      <h2 className="text-xl font-semibold mb-4 text-center">Control Panel</h2>
 
       <select
         value={selectedType}
@@ -109,6 +125,7 @@ function LeftPanel({ blocks, setBlocks, selectedId, setSelectedId }) {
           <option key={type} value={type}>{type}</option>
         ))}
       </select>
+
 
       {currentBlock && (
         <>

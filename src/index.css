@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+[ contenteditable = "true"] {
+    direction: ltr;
+    text-align: left;
+}
